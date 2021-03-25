@@ -1,10 +1,16 @@
+
 import 'package:flutter/material.dart';
 import '../models/Events.dart';
+import '../models/User.dart';
 import 'Connexion.dart';
+import 'CreateEvent.dart';
+import 'package:dio/dio.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
-
+  MyHomePage({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
+  bool connected;
+  User userCo;
+  Map<String, dynamic> tokenJWT;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -13,13 +19,49 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Events> _ListEvents;
   DateTime laDate = DateTime.utc(2000, 02, 27);
+  Dio dio;
 
   void initState() {
-    Events unEvent = new Events("Anniv chez alex", "Tous chez alex", laDate, 1, "gregergger", "5 rue cronstadt Nancy", false, true, 2);
     setState(() {
-      //_ListEvents.insert(0, unEvent);
+      _ListEvents = [];
+      print(widget.connected);
+      print(widget.userCo.mail);
+      dio = Dio();
+      dio.options.baseUrl = "http://5010db58facc.ngrok.io/cours/reunionou-api-2/backend1/public/";
+      _getEvents();
+      //print(_ListEvents[0]);
     });
     super.initState();
+  }
+
+  void _logOut(){
+    setState(() {
+        widget.connected = false;
+        widget.userCo = new User();
+    });
+  }
+
+  Future<void> _getEvents() async{
+    try{
+      setState(() {
+       dio.options.headers['Origin'] = "ok ";       
+      });
+      Response response = await dio.get("/events");
+      setState(() {
+              var oui = response.data;
+              for (var unEvent in oui['events']){
+                User creator = new User();
+                creator.id = unEvent['event']['creator']['id'];
+                creator.name = unEvent['event']['creator']['name'];
+                creator.first_name = unEvent['event']['creator']['firstname'];
+                creator.mail = unEvent['event']['creator']['mail'];
+                _ListEvents.insert(0, Events.fromJson(unEvent['event'], creator));
+                
+              }
+            });
+    }catch(e){
+      print(e);
+    }
   }
 
   Widget showEvents(){
@@ -27,13 +69,16 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: _ListEvents.length,
       itemBuilder: (BuildContext context, int index) {
         final Events event = _ListEvents[index];
+
         return Card(
           child: ListTile(
+            onTap: () => print("oui"),
+            onLongPress: () => print("oui"),
             title: Text(
               event.title,
             ),
           ),
-          color: Colors.red[700],
+          color: Colors.grey[50]        
         );
       },
     );
@@ -47,26 +92,17 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          //showEvents(),
+          Expanded(
+            child: (_ListEvents.length > 0) ? showEvents() : Center(child: Text("Pas d'event public"),),
+            )
         ],
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.blue,
         child: Container(
           height: 50.0,
-          child: Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.login),
-                iconSize: 40,
-                color: Colors.white,
-                onPressed: (){
-                  Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ConnexionPage(),),
-                  );           
-                }
-                )
-            ],
+          child: Center(
+            child: (widget.connected) ? Container(child: Row(children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),Expanded(child: TextButton(child: Text("Créer Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),)  : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
             ),
           ),
         
