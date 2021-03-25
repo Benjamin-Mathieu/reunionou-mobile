@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/Events.dart';
 import '../models/User.dart';
+import 'Home.dart';
 import 'Connexion.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +12,7 @@ class CreateEvent extends StatefulWidget {
   CreateEvent({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
   bool connected;
   User userCo;
-  Map<String, dynamic> tokenJWT;
+  String tokenJWT;
   @override
   _CreateEvent createState() => _CreateEvent();
 }
@@ -20,12 +21,69 @@ class _CreateEvent extends State<CreateEvent>{
 
     final _formKey = GlobalKey<FormState>();
     Key _key;
+    Dio dio;
     bool _public = false;
     bool _main_event = false;
+
+    String title, desc, adress;
+    DateTime date;
+    int public, main_event;
+
+    void _addTitle(value){
+      setState(() {
+        title = value;          
+      });
+    }
+
+    void _addDesc(value){
+      setState(() {
+        desc = value;          
+      });
+    }
+
+    void _addDate(value){ 
+      setState(() {
+        date = value;
+      });
+    }
+
+    void _addAdress(value){
+      setState(() {
+        adress = value;          
+      });
+    }
+
+    Future<void> _Create() async{
+      try{
+        setState(() {
+          dio.options.headers['Origin'] = "ok ";    
+          dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT; 
+        });
+        DateTime ladate =DateTime(2020, 02, 27, 20, 50);
+        print(ladate.toString());
+        Response response = await  dio.post("/events", data: {"title" : title, "description" : desc, "date" : date.toString(), "adress" : adress, "public" : _public, "main_event" : _main_event});
+        print(response.data);
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),
+        );
+        
+      }catch(e){
+        print(e);
+      }
+    }
+
+    void initState() {
+        setState(() {
+          dio = Dio();
+          dio.options.baseUrl = "http://b047c809b01d.ngrok.io";
+        });
+        super.initState();
+      }
     
 
     Widget _showForm(){
-      final format = DateFormat("yyyy-MM-dd HH:mm");
+      final format = DateFormat("yMd").add_Hm();
+
       return Form(
         key: _formKey,
         child: Center(
@@ -48,7 +106,7 @@ class _CreateEvent extends State<CreateEvent>{
                           }
                             return null;
                           },
-                      onSaved: (value) => print("ouiouioui"),
+                      onSaved: (value) => _addTitle(value),
                     ),
               alignment: Alignment(0, -0.5),
             ),
@@ -67,13 +125,14 @@ class _CreateEvent extends State<CreateEvent>{
                           }
                             return null;
                           },
-                      onSaved: (value) => print("ouiouioui"),
+                      onSaved: (value) => _addDesc(value),
                     ),
             ),
             Container(
               padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
               width: 300,
               child: DateTimeField(
+                onSaved: (value) => _addDate(value),
                 decoration: InputDecoration(icon: Icon(Icons.date_range), labelText: 'Date', hintText: "Saisir votre date", ),
                 format: format,
                 onShowPicker: (context, currentValue) async {
@@ -110,7 +169,7 @@ class _CreateEvent extends State<CreateEvent>{
                           }
                             return null;
                           },
-                      onSaved: (value) => print("ouiouioui"),
+                      onSaved: (value) => _addAdress(value),
                     ),
             ),
             Container(
@@ -126,7 +185,8 @@ class _CreateEvent extends State<CreateEvent>{
                         value: _public,
                         onChanged: (value){
                           setState(() {
-                            _public = value;              
+                            _public = value;  
+                            print(_public);            
                           });
                         },
                       ),
@@ -142,7 +202,8 @@ class _CreateEvent extends State<CreateEvent>{
                         value: _main_event,
                         onChanged: (value){
                           setState(() {
-                            _main_event = value;              
+                            _main_event = value;
+                             print(_main_event);  
                           });
                         },
                       ),
@@ -160,10 +221,16 @@ class _CreateEvent extends State<CreateEvent>{
                 onPressed: () {
                     if(_formKey.currentState.validate()){  
                       _formKey.currentState.save();
-
-                      // String token = base64Encode(utf8.encode(mail + ":" + password));
-                      // _login(token);
-                      //   _formKey.currentState.reset();
+                      print("test tesst eteterefregeruhfnerifhbnergfierkgerjurb");
+                      print(widget.tokenJWT.toString());
+                      print(date.toString());
+                      String test2 = date.toString();
+                      String test3 = test2.substring(0, 16);
+                      DateTime uneDate = DateTime.parse(test3);
+                      int i = test2.length;
+                      print("la date : "+uneDate.toString());
+                      _Create();
+                      _formKey.currentState.reset();
                     }
                 }
                 ),

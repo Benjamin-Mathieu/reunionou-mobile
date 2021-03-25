@@ -7,8 +7,7 @@ class Events{
   String date_event;
   User leUser;
 
-  Events(this.title, this.description, this.date_event, this.leUser, this.token, this.adress, this.public, this.main_event, this.event_id);
-
+  Events(this.title, this.description, this.date_event, this.leUser, this.token, this.adress, this.public, this.main_event);
   Events.fromJson(Map<String, dynamic> json, User creator)
     : title = json['title'],
       description = json['description'],

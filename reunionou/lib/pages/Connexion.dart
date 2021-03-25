@@ -29,7 +29,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://5010db58facc.ngrok.io/cours/reunionou-api-2/backend1/public/";
+          dio.options.baseUrl = "http://b047c809b01d.ngrok.io";
         });
         super.initState();
       }
@@ -55,12 +55,13 @@ class _ConnexionPage extends State<ConnexionPage>{
       Response reponse = await  dio.post("/signIn");
       Map<String, dynamic> payload = Jwt.parseJwt(reponse.data);
       User use = new User();
+      print(reponse.data.toString());
       use.mail = payload['user']['mail'];
       use.first_name = payload['user']['firstname'];
       use.name = payload['user']['name'];
 
       Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: use, tokenJWT: payload,),),
+          MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: use, tokenJWT: reponse.data,),),
       );
 
       if(use.mail == payload['user']['mail']){

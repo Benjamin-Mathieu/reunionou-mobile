@@ -10,7 +10,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
   bool connected;
   User userCo;
-  Map<String, dynamic> tokenJWT;
+  String tokenJWT;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
-      dio.options.baseUrl = "http://5010db58facc.ngrok.io/cours/reunionou-api-2/backend1/public/";
+      dio.options.baseUrl = "http://b047c809b01d.ngrok.io";
       _getEvents();
       //print(_ListEvents[0]);
     });
@@ -89,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Reunionou"),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
@@ -102,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           height: 50.0,
           child: Center(
-            child: (widget.connected) ? Container(child: Row(children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),Expanded(child: TextButton(child: Text("Créer Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),)  : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
+            child: (widget.connected) ? Container(padding: EdgeInsets.fromLTRB(30, 0, 0, 0),child: Row(children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),Expanded(child: TextButton(child: Text("Créer Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),)  : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
             ),
           ),
         
