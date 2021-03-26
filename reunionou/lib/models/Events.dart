@@ -9,7 +9,7 @@ class Events{
   int id;
 
   Events(this.id,this.title, this.description, this.date_event, this.leUser, this.token, this.adress, this.public, this.main_event);
-  Events.fromJson(Map<String, dynamic> json, User creator)
+  Events.fromJson(Map<String, dynamic> json, User creator, )
     : id = json['id'],
       title = json['title'],
       description = json['description'],

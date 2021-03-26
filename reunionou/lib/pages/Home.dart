@@ -6,7 +6,6 @@ import 'Connexion.dart';
 import 'CreateEvent.dart';
 import 'package:dio/dio.dart';
 import '../widgets/ShowEventDetail.dart';
-import 'ShowPrivateEvent.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
@@ -20,7 +19,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   List<Events> _ListEvents;
-  List<Events> _ListPrivateEvents;
+   List<Events> _ListPrivateEvents;
   Dio dio;
   Events _currentEvent;
   bool _showDetail = false;
@@ -30,11 +29,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     setState(() {
       _ListEvents = [];
+      _ListPrivateEvents = [];
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
       dio.options.baseUrl = "http://54866077bb23.ngrok.io";
       _getEvents();
+      _getPrivateEvents();
       //print(_ListEvents[0]);
     });
     super.initState();
@@ -111,20 +112,52 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Widget _choicePrivate(){
+  bool _activePublic = false;
+  bool _activePrivate = false;
+
+  Color _isActivePublic(){
+    if(_activePrivate == false && _activePublic == true){
+      return Colors.blue[900];
+    }else{
+      return Colors.blue;
+    }
+  }
+
+  Color _isActivePrivate(){
+    if(_activePrivate == true && _activePublic == false){
+      return Colors.blue[900];
+    }else{
+      return Colors.blue;
+    }
+  }
+
+  Widget _choicePublicPrivate(){
     return Card(
-      child: Center(
-          child:Container(
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(95, 0, 50, 0),
             child: ElevatedButton(
-              onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShowPrivateEvent(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);},
-              child: Text("Evénement Privée"),
-            ),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(_isActivePublic(),)),
+                onPressed: (){setState(() {_showPrivate = false; _activePublic = true; _activePrivate = false;});},
+                child:Text("Publique"),
+              ),
+          ),  
+          Container(
+            child: ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(_isActivePrivate(),)),
+              onPressed: (){setState(() {_showPrivate = true; _activePublic = false; _activePrivate = true;});},
+              child: Text("Privée"),
+          ),
           )
+          
+        ],
       ),
     );
   }
 
   Widget showEvents(){
+    if(_showPrivate == false){
       return ListView.builder(
         itemCount: _ListEvents.length,
         itemBuilder: (BuildContext context, int index) {
@@ -142,10 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
       );
-  }
-
-  Widget showPrivateEvent(){
-    return ListView.builder(
+    }else{
+      return ListView.builder(
         itemCount: _ListPrivateEvents.length,
         itemBuilder: (BuildContext context, int index) {
           final Events event = _ListPrivateEvents[index];
@@ -162,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
       );
+    }
   }
 
   @override
@@ -173,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          (widget.connected) ? _choicePrivate() : Container(),
+          (widget.connected) ? _choicePublicPrivate() : Container(),
           (_showDetail) ? ShowEventDetail(connected: widget.connected, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: _currentEvent,) : Container(),
           Expanded(
             child: (_ListEvents.length > 0) ? showEvents() : Center(child: Text("Pas d'event public"),),
