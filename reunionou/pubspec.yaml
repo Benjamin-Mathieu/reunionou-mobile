@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  flutter_map: any
   datetime_picker_formfield: ^2.0.0
   jwt_decode: ^0.3.1
   dio: 3.0.10
@@ -35,9 +36,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^1.1.5+1
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_native_splash:
+  image: assets/images/logo-reunionou.png
+  color: "f95c39"
 
 # The following section is specific to Flutter.
 flutter:

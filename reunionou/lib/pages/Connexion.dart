@@ -29,7 +29,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://b047c809b01d.ngrok.io";
+          dio.options.baseUrl = "http://54866077bb23.ngrok.io";
         });
         super.initState();
       }

@@ -6,20 +6,19 @@ import 'Connexion.dart';
 import 'CreateEvent.dart';
 import 'package:dio/dio.dart';
 import '../widgets/ShowEventDetail.dart';
-import 'ShowPrivateEvent.dart';
+import 'Home.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
+class ShowPrivateEvent extends StatefulWidget {
+  ShowPrivateEvent({Key key, this.connected, this.userCo, this.tokenJWT}) : super(key: key);
   bool connected;
   User userCo;
   String tokenJWT;
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ShowPrivateEvent createState() => _ShowPrivateEvent();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ShowPrivateEvent extends State<ShowPrivateEvent>{
 
-  List<Events> _ListEvents;
   List<Events> _ListPrivateEvents;
   Dio dio;
   Events _currentEvent;
@@ -29,12 +28,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     setState(() {
-      _ListEvents = [];
+      _ListPrivateEvents = [];
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
       dio.options.baseUrl = "http://54866077bb23.ngrok.io";
-      _getEvents();
+      _getPrivateEvents();
       //print(_ListEvents[0]);
     });
     super.initState();
@@ -44,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
         widget.connected = false;
         widget.userCo = new User();
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);
     });
   }
 
@@ -52,30 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _showDetail = true;
       _currentEvent = event;       
     });
-  }
-
-
-
-  Future<void> _getEvents() async{
-    try{
-      setState(() {
-       dio.options.headers['Origin'] = "ok ";       
-      });
-      Response response = await dio.get("/events");
-      setState(() {
-              var oui = response.data;
-              for (var unEvent in oui['events']){
-                User creator = new User();
-                creator.id = unEvent['event']['creator']['id'];
-                creator.name = unEvent['event']['creator']['name'];
-                creator.first_name = unEvent['event']['creator']['firstname'];
-                creator.mail = unEvent['event']['creator']['mail'];
-                _ListEvents.insert(0, Events.fromJson(unEvent['event'], creator)); 
-              }
-            });
-    }catch(e){
-      print(e);
-    }
   }
 
   Future<void> _getPrivateEvents() async{
@@ -93,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 creator.name = unEvent['event']['creator']['name'];
                 creator.first_name = unEvent['event']['creator']['firstname'];
                 creator.mail = unEvent['event']['creator']['mail'];
+                print(unEvent);
                 _ListPrivateEvents.insert(0, Events.fromJson(unEvent['event'], creator)); 
                 
               }
@@ -101,47 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }catch(e){
       print(e);
     }
-  }
-
-  void _ShowPrivateEvent(){
-    if(!_showPrivate){
-      _getEvents();
-    }else{  
-      _getPrivateEvents();
-    }
-  }
-
-  Widget _choicePrivate(){
-    return Card(
-      child: Center(
-          child:Container(
-            child: ElevatedButton(
-              onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShowPrivateEvent(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);},
-              child: Text("Evénement Privée"),
-            ),
-          )
-      ),
-    );
-  }
-
-  Widget showEvents(){
-      return ListView.builder(
-        itemCount: _ListEvents.length,
-        itemBuilder: (BuildContext context, int index) {
-          final Events event = _ListEvents[index];
-
-          return Card(
-            child: ListTile(
-              onTap: () => _showDetailEvent(event),
-              onLongPress: () => print("oui"),
-              title: Text(
-                event.title,
-              ),
-            ),
-            color: Colors.grey[50]        
-          );
-        },
-      );
   }
 
   Widget showPrivateEvent(){
@@ -164,19 +100,32 @@ class _MyHomePageState extends State<MyHomePage> {
       );
   }
 
+  Widget _choicePublic(){
+    return Card(
+      child: Center(
+          child:Container(
+            child: ElevatedButton(
+              onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);},
+              child: Text("Evénement Publique"),
+            ),
+          )
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context){
+      return Scaffold(
       appBar: AppBar(
         title: Text("Reunionou"),
         automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
-          (widget.connected) ? _choicePrivate() : Container(),
+          (widget.connected) ? _choicePublic() : Container(),
           (_showDetail) ? ShowEventDetail(connected: widget.connected, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: _currentEvent,) : Container(),
           Expanded(
-            child: (_ListEvents.length > 0) ? showEvents() : Center(child: Text("Pas d'event public"),),
+            child: (_ListPrivateEvents.length > 0) ? showPrivateEvent() : Center(child: Text("ouioui"),),
             )
         ],
       ),
@@ -198,3 +147,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
