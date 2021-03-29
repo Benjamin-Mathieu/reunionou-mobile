@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/Events.dart';
 import '../models/User.dart';
 import 'Home.dart';
-import 'Connexion.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -48,9 +46,11 @@ class _CreateEvent extends State<CreateEvent>{
     }
 
     void _addAdress(value){
+      _testAdress();
       setState(() {
-        adress = value;          
+        adress = value;     
       });
+      
     }
 
     Future<void> _Create() async{
@@ -75,10 +75,45 @@ class _CreateEvent extends State<CreateEvent>{
     void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://54866077bb23.ngrok.io";
+          dio.options.baseUrl = "http://01f8bfabc8fe.ngrok.io/";
+          
         });
         super.initState();
       }
+    String _errorAdress = " ";
+    bool _good;
+
+    Future<bool> _testAdress() async{
+      try{
+        setState(() {
+        dio.options.headers['Origin'] = "ok ";       
+        });
+        Response response = await dio.get("https://api-adresse.data.gouv.fr/search/?q="+adress);
+        print(response.data['features'][0]);
+        int y = 0;
+        for (var item in response.data['features']) {
+          y++;
+        }
+        if(y == 0){
+          setState(() {
+            _good = false;
+          });
+        }else{
+          if(y > 1){
+            setState(() {
+              _good = false;     
+            });
+          }else{
+            setState(() {
+              _good = true;         
+            });
+          }
+        }
+      }catch(e){
+        print(e);
+      }
+
+    }
     
 
     Widget _showForm(){
@@ -89,8 +124,6 @@ class _CreateEvent extends State<CreateEvent>{
         child: Center(
           child: Column(
           children : [
-            SizedBox(height: 100,),
-            Text("Créer son Event",style:  TextStyle(fontSize: 50, fontWeight: FontWeight.bold ,color: Colors.lightBlue),),
             Container(
               padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
               width: 300,
@@ -214,23 +247,24 @@ class _CreateEvent extends State<CreateEvent>{
             ),
             Container(
               padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              margin:EdgeInsets.fromLTRB(0, 0, 0, 50),
               child: ElevatedButton(
                 key: _key,
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue), ),
                 child: Text('Créer l\'event',style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                 onPressed: () {
                     if(_formKey.currentState.validate()){  
-                      _formKey.currentState.save();
-                      print("test tesst eteterefregeruhfnerifhbnergfierkgerjurb");
-                      print(widget.tokenJWT.toString());
-                      print(date.toString());
-                      String test2 = date.toString();
-                      String test3 = test2.substring(0, 16);
-                      DateTime uneDate = DateTime.parse(test3);
-                      int i = test2.length;
-                      print("la date : "+uneDate.toString());
-                      _Create();
-                      _formKey.currentState.reset();
+                      
+                      if(_good == false){
+                        setState(() {
+                          _errorAdress = "Veuillez saisir une bonne adresse (soit votre adresse n'est pas en France soit elle n'est pas assez précise";
+                          _formKey.currentState.reset();                      
+                        });
+                      }else{
+                        _formKey.currentState.save();
+                        _formKey.currentState.reset();
+                        _Create();
+                      }
                     }
                 }
                 ),
@@ -245,11 +279,30 @@ class _CreateEvent extends State<CreateEvent>{
     Widget build(BuildContext context){
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.red[700],
           title: Text("Créer un event"),
         ),
         body: SingleChildScrollView(
           child: Column(children: [
-            _showForm()
+            SizedBox(height: 100,),
+            Text("Créer son Event",style:  TextStyle(fontSize: 50, fontWeight: FontWeight.bold ,color: Colors.lightBlue),),
+            Container(
+              margin:EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(width: 1, color: Colors.blue[800]), top: BorderSide(width: 1, color: Colors.blue[800]), left: BorderSide(width: 1, color: Colors.blue[800]), right: BorderSide(width: 1, color: Colors.blue[800])),
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                  Colors.blue[300],
+                  Colors.blue[100],
+                ]
+                ),
+              ),
+              child: _showForm(),
+            ),
+            Text(_errorAdress),
           ]),
           ),
       );

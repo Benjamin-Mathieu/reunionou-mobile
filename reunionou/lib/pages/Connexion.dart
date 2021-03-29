@@ -29,7 +29,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://54866077bb23.ngrok.io";
+          dio.options.baseUrl = "http://01f8bfabc8fe.ngrok.io/";
         });
         super.initState();
       }
@@ -147,6 +147,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red[700],
         title: Text("Connexion"),
       ),
       body: SingleChildScrollView(

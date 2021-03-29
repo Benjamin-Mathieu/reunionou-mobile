@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/Events.dart';
 import '../models/User.dart';
 import 'Connexion.dart';
+import 'MonProfil.dart';
 import 'CreateEvent.dart';
 import 'package:dio/dio.dart';
 import '../widgets/ShowEventDetail.dart';
@@ -33,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
-      dio.options.baseUrl = "http://54866077bb23.ngrok.io";
+      dio.options.baseUrl = "http://01f8bfabc8fe.ngrok.io/";
       _getEvents();
       _getPrivateEvents();
       //print(_ListEvents[0]);
@@ -171,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 event.title,
               ),
             ),
-            color: Colors.grey[50]        
+            color: Colors.grey[100],        
           );
         },
       );
@@ -189,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 event.title,
               ),
             ),
-            color: Colors.grey[50]        
+            color: Colors.grey[100],        
           );
         },
       );
@@ -200,6 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red[700],
         title: Text("Reunionou"),
         automaticallyImplyLeading: false,
       ),
@@ -213,11 +215,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.blue,
+        color: Colors.red[700],
         child: Container(
           height: 50.0,
           child: Center(
-            child: (widget.connected) ? Container(padding: EdgeInsets.fromLTRB(30, 0, 0, 0),child: Row(children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),Expanded(child: TextButton(child: Text("Créer Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),)  : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
+            child: (widget.connected) ? 
+              Container(
+                child: Row (mainAxisAlignment: MainAxisAlignment.spaceAround, children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),
+                Expanded(child: IconButton(icon: Icon(Icons.account_circle, color: Colors.white,), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonProfil(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);}), ),
+                
+                Expanded(child: TextButton(child: Text("Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),) 
+                : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
             ),
           ),
         
