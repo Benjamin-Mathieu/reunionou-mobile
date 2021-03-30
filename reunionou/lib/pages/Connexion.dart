@@ -1,11 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import '../models/Events.dart';
 import '../models/User.dart';
 import 'package:dio/dio.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'Home.dart';
+import 'Inscription.dart';
 
 
 class ConnexionPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
+          dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
         });
         super.initState();
       }
@@ -46,6 +46,27 @@ class _ConnexionPage extends State<ConnexionPage>{
         });
   }
 
+    void _showErrorDialog(){
+      Widget cancelButton = TextButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          });
+      AlertDialog alert = AlertDialog(
+        title: Text("Erreur - Connexion"),
+        content: Text("Veuillez saisir le bon mail et/ou mot de passe"),
+        actions: [
+          cancelButton,
+        ],
+      );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );   
+    }
+
   Future<void> _login(token) async{
     try{
       setState(() {
@@ -55,7 +76,6 @@ class _ConnexionPage extends State<ConnexionPage>{
       Response reponse = await  dio.post("/signIn");
       Map<String, dynamic> payload = Jwt.parseJwt(reponse.data);
       User use = new User();
-      print(reponse.data.toString());
       use.mail = payload['user']['mail'];
       use.first_name = payload['user']['firstname'];
       use.name = payload['user']['name'];
@@ -64,12 +84,8 @@ class _ConnexionPage extends State<ConnexionPage>{
           MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: use, tokenJWT: reponse.data,),),
       );
 
-      if(use.mail == payload['user']['mail']){
-        print("oui");
-      }else{
-        print("non");
-      }
     }catch(e){
+      _showErrorDialog();
       print(e);
     }
   }
@@ -121,7 +137,7 @@ class _ConnexionPage extends State<ConnexionPage>{
                   ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 40, 0, 30),
             child: ElevatedButton(
               key: _key,
               style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue), ),
@@ -152,7 +168,11 @@ class _ConnexionPage extends State<ConnexionPage>{
       ),
       body: SingleChildScrollView(
         child: Column(children: [
-          _showForm()
+          _showForm(),
+          Text("Vous n'avez pas de compte ?"),
+          ElevatedButton(
+            onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => InscriptionPage(),),);} , 
+            child: Text("Inscription"))
         ]),
         ),
     );

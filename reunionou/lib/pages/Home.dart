@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
-      dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
+      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
       _getEvents();
       _getPrivateEvents();
       //print(_ListEvents[0]);
@@ -224,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row (mainAxisAlignment: MainAxisAlignment.spaceAround, children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),
                 Expanded(child: IconButton(icon: Icon(Icons.account_circle, color: Colors.white,), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonProfil(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),);}), ),
                 
-                Expanded(child: TextButton(child: Text("Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),) 
+                Expanded(child: TextButton(child: Text("Events", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT, isEditing: false, eventId: null,),),);}, autofocus: false, clipBehavior: Clip.none,)) ],),) 
                 : IconButton(icon: Icon(Icons.login, semanticLabel: "Connexion",) ,iconSize: 40,color: Colors.white,onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnexionPage(),),);})                                                                                                                                                                                                                                                                                                                                                                                                                                             
             ),
           ),

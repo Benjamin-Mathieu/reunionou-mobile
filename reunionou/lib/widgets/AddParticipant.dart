@@ -24,7 +24,7 @@ class _AddParticipant extends State<AddParticipant>{
     void initState() {
       setState(() {
         dio = Dio();
-        dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
+        dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
       });
       super.initState();
     }
@@ -33,6 +33,27 @@ class _AddParticipant extends State<AddParticipant>{
       setState(() {
             _mail = value;
           });
+    }
+
+    void _showErrorDialog(){
+      Widget cancelButton = TextButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          });
+      AlertDialog alert = AlertDialog(
+        title: Text("Erreur - Ajout participant"),
+        content: Text("Veuillez saisir l'adresse mail d'un membre existant"),
+        actions: [
+          cancelButton,
+        ],
+      );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );   
     }
 
 
@@ -46,6 +67,7 @@ class _AddParticipant extends State<AddParticipant>{
         Response response = await  dio.post("/events/"+widget.event.id.toString() + "/participants", data: {"mail" : _mail});
       }catch(e){
         print(e);
+        _showErrorDialog();
       }
     }
 

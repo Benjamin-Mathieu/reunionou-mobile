@@ -31,7 +31,7 @@ class _MessageEvent extends State<MessageEvent>{
     setState(() {
       _ListMsg = [];
       dio = Dio();
-      dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
+      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
       _getMsg();
     });
     super.initState();
