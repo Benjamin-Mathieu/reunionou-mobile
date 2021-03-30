@@ -273,6 +273,8 @@ class _UnEvent extends State<UnEvent>{
     }
   }
 
+
+
   @override
   Widget build(BuildContext context){
 
@@ -346,13 +348,15 @@ class _UnEvent extends State<UnEvent>{
               
             ],)
           ),
-          floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.red[700],
-                splashColor: Colors.red[100],
-                onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessageEvent(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: widget.event,),),);},
-                tooltip: 'Increment',
-                child: Icon(Icons.message_rounded,),
-              ),
+          floatingActionButton: Visibility(
+                visible: widget.connected, 
+                child:FloatingActionButton(
+                  backgroundColor: Colors.red[700],
+                  splashColor: Colors.red[100],
+                  onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessageEvent(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: widget.event,),),);},
+                  tooltip: 'Message',
+                  child: Icon(Icons.message_rounded,),
+              ) ,) 
       );
 
   }

@@ -207,7 +207,9 @@ class _MessageEvent extends State<MessageEvent>{
                           if(_formKeyEditMess.currentState.validate()){  
                             _formKeyEditMess.currentState.save();
                             _editMsg(msg);
+                            
                             _formKeyEditMess.currentState.reset();
+                            Navigator.of(context).pop();
                           }
                           
                         }
