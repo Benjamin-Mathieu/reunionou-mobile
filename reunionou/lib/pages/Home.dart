@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
-      dio.options.baseUrl = "http://01f8bfabc8fe.ngrok.io/";
+      dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
       _getEvents();
       _getPrivateEvents();
       //print(_ListEvents[0]);

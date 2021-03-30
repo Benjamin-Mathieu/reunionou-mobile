@@ -46,12 +46,35 @@ class _CreateEvent extends State<CreateEvent>{
     }
 
     void _addAdress(value){
-      _testAdress();
       setState(() {
         adress = value;     
       });
       
     }
+
+    void _showAlertDialogBadAdress(){
+
+    Widget cancelButton = TextButton(
+        child: Text("Cancel"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        });
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Veuillez saisir une adresse valide"),
+      content: Text("ou plus précise"),
+      actions: [
+        cancelButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );   
+  }
 
     Future<void> _Create() async{
       try{
@@ -67,55 +90,23 @@ class _CreateEvent extends State<CreateEvent>{
           MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),
         );
         
-      }catch(e){
-        print(e);
+      }on DioError catch(e){
+        print(e.response.data['error'].toString());
+        if(e.response.data['error'].toString() == "Adress need to be more precise or wrong adress"){
+          _showAlertDialogBadAdress();
+        }
       }
     }
 
     void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://01f8bfabc8fe.ngrok.io/";
+          dio.options.baseUrl = "http://acd6da7a9633.ngrok.io/";
           
         });
         super.initState();
       }
     String _errorAdress = " ";
-    bool _good;
-
-    Future<bool> _testAdress() async{
-      try{
-        setState(() {
-        dio.options.headers['Origin'] = "ok ";       
-        });
-        Response response = await dio.get("https://api-adresse.data.gouv.fr/search/?q="+adress);
-        print(response.data['features'][0]);
-        int y = 0;
-        for (var item in response.data['features']) {
-          y++;
-        }
-        if(y == 0){
-          setState(() {
-            _good = false;
-          });
-        }else{
-          if(y > 1){
-            setState(() {
-              _good = false;     
-            });
-          }else{
-            setState(() {
-              _good = true;         
-            });
-          }
-        }
-      }catch(e){
-        print(e);
-      }
-
-    }
-    
-
     Widget _showForm(){
       final format = DateFormat("yMd").add_Hm();
 
@@ -254,19 +245,12 @@ class _CreateEvent extends State<CreateEvent>{
                 child: Text('Créer l\'event',style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                 onPressed: () {
                     if(_formKey.currentState.validate()){  
-                      
-                      if(_good == false){
-                        setState(() {
-                          _errorAdress = "Veuillez saisir une bonne adresse (soit votre adresse n'est pas en France soit elle n'est pas assez précise";
-                          _formKey.currentState.reset();                      
-                        });
-                      }else{
                         _formKey.currentState.save();
-                        _formKey.currentState.reset();
                         _Create();
+                        _formKey.currentState.reset();                    
                       }
                     }
-                }
+                
                 ),
             )
           ],
