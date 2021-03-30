@@ -18,21 +18,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+  //variable de la page home
   List<Events> _ListEvents;
-   List<Events> _ListPrivateEvents;
+  List<Events> _ListPrivateEvents;
   Dio dio;
   Events _currentEvent;
   bool _showDetail = false;
   bool _showPrivate = false;
+  bool _activePublic = false;
+  bool _activePrivate = false;
 
-
+  //Fonction qui s'execute au chargement de la page
   void initState() {
     setState(() {
       _ListEvents = [];
       _ListPrivateEvents = [];
-      print(widget.connected);
-      print(widget.userCo.mail);
       dio = Dio();
       dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
       _getEvents();
@@ -41,23 +41,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     super.initState();
   }
-
+  // Fonction qui permet de se déconnecter (reset les variables)
   void _logOut(){
     setState(() {
         widget.connected = false;
         widget.userCo = new User();
     });
   }
-
+  //change les variables pour afficher le detaild de levent
   void _showDetailEvent(event){
     setState(() {
       _showDetail = true;
       _currentEvent = event;       
     });
   }
-
-
-
+  //récupère les events public pour les afficher
   Future<void> _getEvents() async{
     try{
       setState(() {
@@ -79,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
   }
-
+  //récupère les events privé de la personnne co (event crée ou event invité)
   Future<void> _getPrivateEvents() async{
     try{
       setState(() {
@@ -98,13 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 _ListPrivateEvents.insert(0, Events.fromJson(unEvent['event'], creator)); 
                 
               }
-              print(_ListPrivateEvents);
             });
     }catch(e){
       print(e);
     }
   }
-
+  //siwtch l'affichage des events entre privé et publique selon le btn
   void _ShowPrivateEvent(){
     if(!_showPrivate){
       _getEvents();
@@ -112,10 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _getPrivateEvents();
     }
   }
-
-  bool _activePublic = false;
-  bool _activePrivate = false;
-
+  //change la couleur du btn qui est activé entre publique et privé
   Color _isActivePublic(){
     if(_activePrivate == false && _activePublic == true){
       return Colors.blue[900];
@@ -123,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Colors.blue;
     }
   }
-
+  //change la couleur du btn qui est activé entre publique et privé
   Color _isActivePrivate(){
     if(_activePrivate == true && _activePublic == false){
       return Colors.blue[900];
@@ -131,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Colors.blue;
     }
   }
-
+  //btn pulbique et privé
   Widget _choicePublicPrivate(){
     return Card(
       child: Row(
@@ -156,14 +150,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
+  //affiche la listes des events publique ou privé selon le btn actif
   Widget showEvents(){
     if(_showPrivate == false){
       return ListView.builder(
         itemCount: _ListEvents.length,
         itemBuilder: (BuildContext context, int index) {
           final Events event = _ListEvents[index];
-
           return Card(
             child: ListTile(
               onTap: () => _showDetailEvent(event),
@@ -181,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
         itemCount: _ListPrivateEvents.length,
         itemBuilder: (BuildContext context, int index) {
           final Events event = _ListPrivateEvents[index];
-
           return Card(
             child: ListTile(
               onTap: () => _showDetailEvent(event),
@@ -200,25 +192,29 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(//bar du haut
         backgroundColor: Colors.red[700],
         title: Text("Reunionou"),
         automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
+          // si la personne est co afficher les events pb
           (widget.connected) ? _choicePublicPrivate() : Container(),
+          //au click d'un event affiche le widget showeventdetail qui affiche en détail l'event
           (_showDetail) ? ShowEventDetail(connected: widget.connected, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: _currentEvent,) : Container(),
           Expanded(
+            // si la liste est null affiche le message pas d'event public
             child: (_ListEvents.length > 0) ? showEvents() : Center(child: Text("Pas d'event public"),),
             )
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: BottomAppBar( //bar du bas
         color: Colors.red[700],
         child: Container(
           height: 50.0,
           child: Center(
+            // si la personne est co change les btn de la botom bar
             child: (widget.connected) ? 
               Container(
                 child: Row (mainAxisAlignment: MainAxisAlignment.spaceAround, children: [TextButton(child: Text("Déconnexion", style: TextStyle(color: Colors.white, fontSize: 20),), onPressed: (){_logOut();}, autofocus: false, clipBehavior: Clip.none,),
@@ -230,11 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         
         ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: Icon(Icons.add),
-      // ),
+
     );
   }
 }

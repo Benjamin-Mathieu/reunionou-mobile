@@ -14,7 +14,7 @@ class ShowEventDetail extends StatefulWidget {
 }
 
 class _ShowEventDetail extends State<ShowEventDetail>{
-
+  //Affiche dans une card les informations en detail de l'event clické dans le home (le btn + permet d'afficher completement l'event)
   @override
   Widget build(BuildContext context){
     return Card(

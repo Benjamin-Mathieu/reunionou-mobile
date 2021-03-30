@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/User.dart';
 import '../models/Events.dart';
 import 'Home.dart';
-import 'unEvent.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -10,27 +9,38 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class CreateEvent extends StatefulWidget {
   CreateEvent({Key key, this.connected, this.userCo, this.tokenJWT, this.isEditing, this.eventId}) : super(key: key);
-  bool connected;
-  User userCo;
-  String tokenJWT;
-  bool isEditing;
-  Events eventId;
+
+  bool connected; //
+  User userCo;////// Infos de la personnes co
+  String tokenJWT;//
+  bool isEditing;// true si il faut modifier un event
+  Events eventId;// si il faut modifier un event on a besoin de l'id
   @override
   _CreateEvent createState() => _CreateEvent();
 }
 
 class _CreateEvent extends State<CreateEvent>{
 
+    //variable de la page
     final _formKey = GlobalKey<FormState>();
     Key _key;
     Dio dio;
     bool _public = false;
     bool _main_event = false;
-
     String title, desc, adress;
     DateTime date;
     int public, main_event;
+  // fonction lancement de la page
+  void initState() {
+    setState(() {
+      dio = Dio();
+      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+      
+    });
+    super.initState();
+  }
 
+    // début des fonctions pour save les infos des input txt
     void _addTitle(value){
       setState(() {
         title = value;          
@@ -51,7 +61,9 @@ class _CreateEvent extends State<CreateEvent>{
         adress = value;     
       });
     }
+    //fin des fonctions de save
 
+    // popup si une erreur est dû à une mauvaise adresse
     void _showAlertDialogBadAdress(){
       Widget cancelButton = TextButton(
           child: Text("Cancel"),
@@ -73,6 +85,7 @@ class _CreateEvent extends State<CreateEvent>{
       );   
     }
 
+    //utilise la fonction pour modifier un event si isediting = true sinon créer un new event
     void _EditOrNot(){
       if(widget.isEditing){
         _Edit();
@@ -81,6 +94,7 @@ class _CreateEvent extends State<CreateEvent>{
       }
     }
 
+    //fonction qui call la route /events en post pour créer un event
     Future<void> _Create() async{
       try{
         setState(() {
@@ -100,7 +114,7 @@ class _CreateEvent extends State<CreateEvent>{
       }
     }
 
-
+    //fonction qui call la route /events en put pour modifier un event
     Future<void> _Edit() async{
       try{
         setState(() {
@@ -120,15 +134,8 @@ class _CreateEvent extends State<CreateEvent>{
       }
     }
 
-    void initState() {
-        setState(() {
-          dio = Dio();
-          dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
-          
-        });
-        super.initState();
-      }
-    String _errorAdress = " ";
+    //String _errorAdress = " ";
+    // fonction qui permet d'afficher le form pour créer ou modifier un event
     Widget _showForm(){
       final format = DateFormat("yMd").add_Hm();
 
@@ -231,8 +238,7 @@ class _CreateEvent extends State<CreateEvent>{
                         value: _public,
                         onChanged: (value){
                           setState(() {
-                            _public = value;  
-                            print(_public);            
+                            _public = value;           
                           });
                         },
                       ),
@@ -248,8 +254,7 @@ class _CreateEvent extends State<CreateEvent>{
                         value: _main_event,
                         onChanged: (value){
                           setState(() {
-                            _main_event = value;
-                             print(_main_event);  
+                            _main_event = value;  
                           });
                         },
                       ),
@@ -264,6 +269,7 @@ class _CreateEvent extends State<CreateEvent>{
               child: ElevatedButton(
                 key: _key,
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue), ),
+                //si isEditing = false or true change le nom du btn
                 child: (!widget.isEditing) ? Text('Créer l\'event',style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),) : Text('Modifier l\'event',style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                 onPressed: () {
                     if(_formKey.currentState.validate()){  
@@ -291,6 +297,7 @@ class _CreateEvent extends State<CreateEvent>{
         body: SingleChildScrollView(
           child: Column(children: [
             SizedBox(height: 100,),
+            //change le titre si on modif ou pas l'event
             (!widget.isEditing) ? Text("Créer son Event",style:  TextStyle(fontSize: 50, fontWeight: FontWeight.bold ,color: Colors.lightBlue),) : Text("Modifier son Event",style:  TextStyle(fontSize: 50, fontWeight: FontWeight.bold ,color: Colors.lightBlue), textAlign: TextAlign.center,) ,
             Container(
               margin:EdgeInsets.all(20),

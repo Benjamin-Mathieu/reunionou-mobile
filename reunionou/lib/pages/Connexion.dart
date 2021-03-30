@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../models/Events.dart';
 import '../models/User.dart';
 import 'package:dio/dio.dart';
 import 'package:jwt_decode/jwt_decode.dart';
@@ -17,6 +16,7 @@ class ConnexionPage extends StatefulWidget {
 
 class _ConnexionPage extends State<ConnexionPage>{
 
+  //variable de la page connexion
   final _formKey = GlobalKey<FormState>();
   Key _key;
   Dio dio;
@@ -25,51 +25,56 @@ class _ConnexionPage extends State<ConnexionPage>{
   String mail;
   User leUser = new User();
 
+  void initState() { //fonction qui s'execute au chargement de la page
+    setState(() {
+      dio = Dio();
+      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+    });
+    super.initState();
+  }
 
-  void initState() {
-        setState(() {
-          dio = Dio();
-          dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
-        });
-        super.initState();
-      }
+  //début des fonctions qui permet de save les infos des inputs txt
 
   void _addMail(value){
     setState(() {
           mail = value;
-        });
+    });
   }
 
   void _addPass(value){
     setState(() {
           password = value;
+    });
+  }
+  // fin des fonctions
+
+  // popup qui s'affiche quand il y a une erreur lors de la connexion
+  void _showErrorDialog(){
+    Widget cancelButton = TextButton(
+        child: Text("Cancel"),
+        onPressed: () {
+          Navigator.of(context).pop();
         });
+    AlertDialog alert = AlertDialog(
+      title: Text("Erreur - Connexion"),
+      content: Text("Veuillez saisir le bon mail et/ou mot de passe"),
+      actions: [
+        cancelButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );   
   }
 
-    void _showErrorDialog(){
-      Widget cancelButton = TextButton(
-          child: Text("Cancel"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          });
-      AlertDialog alert = AlertDialog(
-        title: Text("Erreur - Connexion"),
-        content: Text("Veuillez saisir le bon mail et/ou mot de passe"),
-        actions: [
-          cancelButton,
-        ],
-      );
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );   
-    }
-
+  //Fonction qui permet de connecter le user
   Future<void> _login(token) async{
     try{
       setState(() {
+        //mise en place des headers
         dio.options.headers['Origin'] = "ok ";    
         dio.options.headers['Authorization'] = "Basic "+token; 
       });
@@ -79,7 +84,7 @@ class _ConnexionPage extends State<ConnexionPage>{
       use.mail = payload['user']['mail'];
       use.first_name = payload['user']['firstname'];
       use.name = payload['user']['name'];
-
+      //passage à la page home
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: use, tokenJWT: reponse.data,),),
       );
@@ -90,6 +95,8 @@ class _ConnexionPage extends State<ConnexionPage>{
     }
   }
 
+
+  //_showFirm permet d'qfficher le formulaire de connexion
   Widget _showForm(){
     return Form(
       key: _formKey,

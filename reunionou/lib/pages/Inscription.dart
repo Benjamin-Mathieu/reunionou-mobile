@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../models/Events.dart';
 import '../models/User.dart';
 import 'package:dio/dio.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'Connexion.dart';
 
 
@@ -17,7 +14,7 @@ class InscriptionPage extends StatefulWidget {
 
 
 class _InscriptionPage extends State<InscriptionPage>{
-
+  //variable de la page inscription
   final _formKey = GlobalKey<FormState>();
   Key _key;
   Dio dio;
@@ -27,7 +24,7 @@ class _InscriptionPage extends State<InscriptionPage>{
   String name, firstname;
   String mail;
   User leUser = new User();
-
+  //fonction chargement de la page
   void initState() {
         setState(() {
           dio = Dio();
@@ -35,7 +32,7 @@ class _InscriptionPage extends State<InscriptionPage>{
         });
         super.initState();
       }
-
+  // début des fonctions de save des input txt
   void _addMail(value){
     setState(() {
           mail = value;
@@ -65,7 +62,7 @@ class _InscriptionPage extends State<InscriptionPage>{
         firstname = value;
       });
   }
-
+  //fonction qui call l'api pour créer le user
   Future<void> _signUp() async{
     try{
       setState(() {
@@ -80,7 +77,7 @@ class _InscriptionPage extends State<InscriptionPage>{
       print(e);
     }
   }
-
+  //fonction qui construit le form
   Widget _showForm(){
     return Form(
       key: _formKey,
@@ -204,8 +201,6 @@ class _InscriptionPage extends State<InscriptionPage>{
         )    
     );
   }
-
-
 
   @override
   Widget build(BuildContext context){

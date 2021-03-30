@@ -16,17 +16,16 @@ class MessageEvent extends StatefulWidget {
 }
 
 class _MessageEvent extends State<MessageEvent>{
+  //variable de la page message
   final _formKey = GlobalKey<FormState>();
   final _formKeyEditMess = GlobalKey<FormState>();
-
   final _contentControllerEditMess = TextEditingController();
   Key _key;
   Key _keytst;
   String _text;
   Dio dio;
   List<Message> _ListMsg;
-
-
+  //fonction charge page
   void initState() {
     setState(() {
       _ListMsg = [];
@@ -36,13 +35,13 @@ class _MessageEvent extends State<MessageEvent>{
     });
     super.initState();
   }
-
+  //fonction qui save le input txt
   void _addTxt(value){
       setState(() {
             _text = value;
           });
   }
-
+  //fonction qui add le msg a lapi
   Future<void> _addMsg() async{
     try{
       setState(() {
@@ -56,8 +55,7 @@ class _MessageEvent extends State<MessageEvent>{
       print(e);
     }
   }
-
-
+  //récupère la list des messages
   Future<void> _getMsg() async{
     try{
       setState(() {
@@ -86,7 +84,7 @@ class _MessageEvent extends State<MessageEvent>{
       print(e);
     }
   }
-
+  //regarde si le message est celui de la personne co ou non
   void _HisMsg(Message msg){
     if(widget.userCo.mail == msg.creator.mail){
       _showAlertDialogDelMsg(msg);
@@ -94,7 +92,7 @@ class _MessageEvent extends State<MessageEvent>{
       _showAlertDialog();
     }
   }
-
+  //demande la confirmation pour supp un message
   void _showAlertDialogDelMsg(msg){
     Widget okButton = TextButton(
       child: Text("Oui !"),
@@ -126,8 +124,7 @@ class _MessageEvent extends State<MessageEvent>{
       },
     );   
   }
-  
-
+  //show message erreur
   void _showAlertDialog(){
 
     Widget cancelButton = TextButton(
@@ -151,7 +148,7 @@ class _MessageEvent extends State<MessageEvent>{
       },
     );   
   }
-
+  //modifier un message dans la bdd
   Future<void> _editMsg(Message msg) async{
     try{
       setState(() {
@@ -165,7 +162,7 @@ class _MessageEvent extends State<MessageEvent>{
       print(e);
     }
   }
-
+  //Affiche la popup avec le form pour modifier un message
   void _showAlertDialogEditMsg(Message msg){
     _contentControllerEditMess.text = msg.text;
     Widget cancelButton = TextButton(
@@ -230,7 +227,7 @@ class _MessageEvent extends State<MessageEvent>{
       },
     );   
   }
-
+  //supprime un message (call a lapi)
   Future<void> _DeleteMsg(msg) async{
     try{
       setState(() {
@@ -244,7 +241,7 @@ class _MessageEvent extends State<MessageEvent>{
       print(e);
     }
   }
-
+  //affiche les messages regarde si le message est celui de la personne co si oui affiche le message a droite
   Widget showMsg(){
     return ListView.builder(
       shrinkWrap: true,
