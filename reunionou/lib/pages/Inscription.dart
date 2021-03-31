@@ -28,7 +28,7 @@ class _InscriptionPage extends State<InscriptionPage>{
   void initState() {
         setState(() {
           dio = Dio();
-          dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+          dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
         });
         super.initState();
       }

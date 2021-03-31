@@ -30,7 +30,7 @@ class _MessageEvent extends State<MessageEvent>{
     setState(() {
       _ListMsg = [];
       dio = Dio();
-      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+      dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
       _getMsg();
     });
     super.initState();
@@ -234,7 +234,7 @@ class _MessageEvent extends State<MessageEvent>{
         dio.options.headers['Origin'] = "ok ";
         dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;        
       });
-      Response response = await dio.delete("http://acd6da7a9633.ngrok.io/events/"+widget.event.id.toString()+"/messages/"+msg.id.toString());
+      Response response = await dio.delete("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString()+"/messages/"+msg.id.toString());
       _ListMsg = [];
       _getMsg();
     }catch(e){

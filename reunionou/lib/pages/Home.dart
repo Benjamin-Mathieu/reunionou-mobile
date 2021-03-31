@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _ListEvents = [];
       _ListPrivateEvents = [];
       dio = Dio();
-      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+      dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
       _getEvents();
       _getPrivateEvents();
       //print(_ListEvents[0]);

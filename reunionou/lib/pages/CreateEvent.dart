@@ -34,7 +34,7 @@ class _CreateEvent extends State<CreateEvent>{
   void initState() {
     setState(() {
       dio = Dio();
-      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+      dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
       
     });
     super.initState();
@@ -191,7 +191,7 @@ class _CreateEvent extends State<CreateEvent>{
                 onShowPicker: (context, currentValue) async {
                   final date = await showDatePicker(
                       context: context,
-                      firstDate: DateTime(1900),
+                      firstDate: DateTime.now(),
                       initialDate: currentValue ?? DateTime.now(),
                       lastDate: DateTime(2100));
                   if (date != null) {

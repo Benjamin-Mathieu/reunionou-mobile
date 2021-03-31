@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/Events.dart';
 import '../models/User.dart';
 import 'package:dio/dio.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'Home.dart';
@@ -23,6 +22,7 @@ class UnEvent extends StatefulWidget {
 
 class _UnEvent extends State<UnEvent>{
 
+  //variable de la page
   Dio dio;
   double _lat;
   double _long;
@@ -32,6 +32,7 @@ class _UnEvent extends State<UnEvent>{
   bool _addParticipant;
   List<String> _ListMeteo;
   
+  //fonction qui s'execute au chargement de la page
   void initState() {
     setState(() {
         _ListMeteo = [];
@@ -47,7 +48,7 @@ class _UnEvent extends State<UnEvent>{
     });
     super.initState();
   }
-
+  //dialog pour supprimer un event 
   void _showAlertDialog(){
     Widget okButton = TextButton(
       child: Text("Oui !"),
@@ -79,14 +80,14 @@ class _UnEvent extends State<UnEvent>{
       },
     );   
   }
-
+  //fonction qui utilise la route delete pour delete l'event
   Future<void> _DeleteEvent() async{
     try{
       setState(() {
         dio.options.headers['Origin'] = "ok ";
         dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;        
       });
-      Response response = await dio.delete("http://e485d2a325e6.ngrok.io/events/"+widget.event.id.toString());
+      Response response = await dio.delete("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString());
 
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),
@@ -96,7 +97,7 @@ class _UnEvent extends State<UnEvent>{
       print(e);
     }
   }
-
+  //Fonction qui call l'api du gouv pour récupérer la lat et long de l'adresse
   Future<void> _getCoord() async{
     try{
       setState(() {
@@ -116,7 +117,7 @@ class _UnEvent extends State<UnEvent>{
       print(e);
     }
   }
-
+  // Fonction qui permet de charger la map quand elle a les coordonnées
   Widget LoadMap(){
     return Container(
               height: 400,
@@ -150,7 +151,7 @@ class _UnEvent extends State<UnEvent>{
                   ),
             );
   }
-
+  // vérifie si c'est le créateur de l'event qui consulte la page
   void _CreatorIsHere(){
     if(widget.userCo.mail == widget.event.leUser.mail){
       _hisCreator = true;
@@ -158,18 +159,17 @@ class _UnEvent extends State<UnEvent>{
       _hisCreator = false;
     }
   }
-
+  //map qui permet de stocket les user et savoir si ils sont présent ou non à l'event
   Map _userpresent = new Map();
-
+  //fonction qui vérifie que le user passé en param est bien la  
   bool _isPresentorNot(User user){
     if(_userpresent[user.id] == 1){
       return true;
     }else{
       return false;
     }
-
   }
-
+  //affiche la liste des participants et change la couleur si il participe ou non
   Widget showParticipent(){
     return ListView.builder(
         shrinkWrap: true,
@@ -203,14 +203,14 @@ class _UnEvent extends State<UnEvent>{
         },
       );
   }
-
+  //récupère les participants au chargement de la page
   Future<void> _getParticipent() async{
     try{
       setState(() {
        dio.options.headers['Origin'] = "ok ";
        dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;       
       });
-      Response response = await dio.get("http://e485d2a325e6.ngrok.io/events/"+widget.event.id.toString());
+      Response response = await dio.get("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString());
       setState(() {
               var oui = response.data;
               for (var unEvent in oui['event']['participants']){
@@ -228,19 +228,19 @@ class _UnEvent extends State<UnEvent>{
       print(e);
     }
   }
-
+  //utilise l'api pour confirmer la présence ou non à l'event
   Future<void> _IParticipe(bool lareponse) async{
     try{
       setState(() {
           dio.options.headers['Origin'] = "ok ";    
           dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;
         });
-      Response response = await dio.put("http://e485d2a325e6.ngrok.io/events/"+widget.event.id.toString()+"/response", data: {"response" : lareponse}, queryParameters: {"token" : widget.event.token});
+      Response response = await dio.put("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString()+"/response", data: {"response" : lareponse}, queryParameters: {"token" : widget.event.token});
     }catch(e){
       print(e);
     }
   }
-
+  //affiche les btn qui permet de choisir si on vient ou pas
   Widget _btnParticipe(){
     return Container(
       child: Row(
@@ -264,7 +264,7 @@ class _UnEvent extends State<UnEvent>{
         ],
         ));
   }
-
+  // affiche les formulaires 
   void _afficherForm(){
     if(_addParticipant == false){
       setState(() {
@@ -276,7 +276,7 @@ class _UnEvent extends State<UnEvent>{
             });
     }
   }
-
+  //affche les infos de la méteo
   Widget _showMeteoData(){
     return Container(
       width: 300.0,
@@ -296,7 +296,7 @@ class _UnEvent extends State<UnEvent>{
       ),
     );
   }
-
+  //ouvre la popup qui permet de voir la méteo
   void _showDialogMeteo(){
     getMeteo();
     Widget cancelButton = TextButton(
@@ -323,7 +323,7 @@ class _UnEvent extends State<UnEvent>{
       },
     );   
   }
-
+  //call l'api méteo par rapport a la lat et long de l'adresse de levent
   Future<void> getMeteo() async{
     try{
       
@@ -360,7 +360,7 @@ class _UnEvent extends State<UnEvent>{
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.red[700],
-          title: Text("Un evenement"),
+          title: Text("Un event"),
         ),
         body: SingleChildScrollView(
             child: Column(
@@ -406,20 +406,19 @@ class _UnEvent extends State<UnEvent>{
                     Text(widget.event.adress, style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
                     SizedBox(height: 10,),
                     Text(widget.event.date_event, style: TextStyle(fontSize: 20), textAlign: TextAlign.center,), 
-                    SizedBox(height: 20,), 
-                    
+                    SizedBox(height: 20,),   
                   ],
                 ),
               ),
-
+              //si la carte est chargé il faut l'afficher
               (!_isLoaded) ? Container() : LoadMap(),
-              
+              // si c'est le créator qui consulte son event affiche des fonctionnalitées 
               (!_hisCreator) ? Container(child: IconButton(icon: Icon(Icons.cloud, color: Colors.blue, size: 40), onPressed: (){ _showDialogMeteo();}),) : Container(child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [ElevatedButton(onPressed: (){_showAlertDialog();}, child: Icon(Icons.delete)),IconButton(icon: Icon(Icons.cloud, color: Colors.blue, size: 40), onPressed: (){_showDialogMeteo();}), ElevatedButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateEvent(connected: widget.connected, userCo: widget.userCo,tokenJWT: widget.tokenJWT, isEditing: true, eventId: widget.event,),),);}, child: Icon(Icons.edit))],),),
               SizedBox(height: 35,), 
               Text("Liste des participants", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,), 
 
               Container( width: 300, child: (_ListParticipent.length > 0) ? showParticipent() : Center(child: Text("Pas de participant"),),), 
-
+              
               (widget.userCo.mail != widget.event.leUser.mail) ? Text("Voulez-vous participer ?", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,) : Text("Voulez vous ajouter un participant?", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
               (_addParticipant) ? AddParticipant(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT, event: widget.event) : Container(),
               (widget.userCo.mail != widget.event.leUser.mail) ? _btnParticipe() : ElevatedButton(onPressed: (){_afficherForm();}, child: Text("Ajouter un participant"),),

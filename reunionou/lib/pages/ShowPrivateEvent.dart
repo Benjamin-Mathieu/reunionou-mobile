@@ -32,7 +32,7 @@ class _ShowPrivateEvent extends State<ShowPrivateEvent>{
       print(widget.connected);
       print(widget.userCo.mail);
       dio = Dio();
-      dio.options.baseUrl = "http://e485d2a325e6.ngrok.io/";
+      dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
       _getPrivateEvents();
       //print(_ListEvents[0]);
     });
