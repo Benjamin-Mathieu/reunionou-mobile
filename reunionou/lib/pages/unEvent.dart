@@ -87,7 +87,7 @@ class _UnEvent extends State<UnEvent>{
         dio.options.headers['Origin'] = "ok ";
         dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;        
       });
-      Response response = await dio.delete("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString());
+      Response response = await dio.delete("http://docketu.iutnc.univ-lorraine.fr:14000/events/"+widget.event.id.toString());
 
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => MyHomePage(connected: true, userCo: widget.userCo, tokenJWT: widget.tokenJWT),),
@@ -210,7 +210,7 @@ class _UnEvent extends State<UnEvent>{
        dio.options.headers['Origin'] = "ok ";
        dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;       
       });
-      Response response = await dio.get("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString());
+      Response response = await dio.get("http://docketu.iutnc.univ-lorraine.fr:14000/events/"+widget.event.id.toString());
       setState(() {
               var oui = response.data;
               for (var unEvent in oui['event']['participants']){
@@ -235,7 +235,7 @@ class _UnEvent extends State<UnEvent>{
           dio.options.headers['Origin'] = "ok ";    
           dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;
         });
-      Response response = await dio.put("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString()+"/response", data: {"response" : lareponse}, queryParameters: {"token" : widget.event.token});
+      Response response = await dio.put("http://docketu.iutnc.univ-lorraine.fr:14000/events/"+widget.event.id.toString()+"/response", data: {"response" : lareponse}, queryParameters: {"token" : widget.event.token});
     }catch(e){
       print(e);
     }

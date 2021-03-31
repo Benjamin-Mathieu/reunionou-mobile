@@ -28,7 +28,7 @@ class _ConnexionPage extends State<ConnexionPage>{
   void initState() { //fonction qui s'execute au chargement de la page
     setState(() {
       dio = Dio();
-      dio.options.baseUrl = "http://272da97b3386.ngrok.io/";
+      dio.options.baseUrl = "http://docketu.iutnc.univ-lorraine.fr:14000/";
     });
     super.initState();
   }
