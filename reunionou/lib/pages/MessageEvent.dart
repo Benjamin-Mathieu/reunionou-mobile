@@ -234,7 +234,7 @@ class _MessageEvent extends State<MessageEvent>{
         dio.options.headers['Origin'] = "ok ";
         dio.options.headers['Authorization'] = "Bearer "+widget.tokenJWT;        
       });
-      Response response = await dio.delete("http://272da97b3386.ngrok.io/events/"+widget.event.id.toString()+"/messages/"+msg.id.toString());
+      Response response = await dio.delete("http://docketu.iutnc.univ-lorraine.fr:14000/events/"+widget.event.id.toString()+"/messages/"+msg.id.toString());
       _ListMsg = [];
       _getMsg();
     }catch(e){
